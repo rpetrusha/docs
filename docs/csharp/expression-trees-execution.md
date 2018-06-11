@@ -14,17 +14,17 @@ It is not compiled and executable code. If you want to execute
 the .NET code that is represented by an expression tree, you must
 convert it into executable IL instructions. 
 ## Lambda Expressions to Functions
-You can convert any LambdaExpression, or any type derived from
-LambdaExpression into executable IL. Other expression types
+You can convert any <xref:System.Linq.Expressions.LambdaExpression>, or any type derived from
+ <xref:System.Linq.Expressions.LambdaExpression>, into executable IL. Other expression types
 cannot be directly converted into code. This restriction has
 little effect in practice. Lambda expressions are the only
 types of expressions that you would want to execute by converting
 to executable intermediate language (IL). (Think about what it would mean
-to directly execute a `ConstantExpression`. Would it mean
-anything useful?) Any expression tree that is a `LamdbaExpression`,
+to directly execute a <xref:System.Linq.Expressions.ConstantExpression>. Would it mean
+anything useful?) Any expression tree that is a `LambdaExpression`,
 or a type derived from `LambdaExpression` can be converted to IL.
-The expression type `Expression<TDelegate>`
-is the only concrete example in the .NET Core libraries. It's used
+The expression type <xref:System.Linq.Expressions.Expression%601>
+is the only concrete example in the .NET libraries. It's used
 to represent an expression that maps to any delegate type. Because
 this type maps to a delegate type, .NET can examine
 the expression, and generate IL for an appropriate delegate that
@@ -35,17 +35,16 @@ and its corresponding delegate. For example, an expression tree that
 is represented by `Expression<Func<int>>` would be converted to a delegate
 of the type `Func<int>`. For a lambda expression with any return type
 and argument list, there exists a delegate type that is the target type
-for the executable code represented by that lamdba expression.
+for the executable code represented by that lambda expression.
 
-The `LamdbaExpression` type contains `Compile` and `CompileToMethod`
+The <xref:System.Linq.Expressions.LambdaExpression> type contains <xref:System.Linq.Expressions.LambdaExpression.Compile%2A> and <xref:System.Linq.Expressions.LambdaExpression.CompileToMethod%2A>
 members that you would use to convert an expression tree to executable
-code. The `Compile` method creates a delegate. The `CompileToMethod`
-method updates a `MethodBuilder` object with the IL that represents
-the compiled output of the expression tree. Note that `CompileToMethod`
-is only available on the full desktop framework, not on the 
-.NET Core framework.
+code. The <xref:System.Linq.Expressions.LambdaExpression.Compile%2A>  method creates a delegate. The <xref:System.Linq.Expressions.LambdaExpression.CompileToMethod%2A> method 
+updates a <xref:System.Reflection.Emit.MethodBuilder> object with the IL that represents
+the compiled output of the expression tree. Note that <xref:System.Linq.Expressions.LambdaExpression.CompileToMethod%2A>
+is only available on the .NET Framework and not on .NET Core.
 
-Optionally, you can also provide a `DebugInfoGenerator` that will
+Optionally, you can also provide a <xref:System.Runtime.CompilerServices.DebugInfoGenerator> that will
 receive the symbol debugging information for the generated delegate
 object. This enables you to convert the expression tree into a
 delegate object, and have full debugging information about the
@@ -63,16 +62,15 @@ Console.WriteLine(answer);
 
 Notice that the delegate type is based on the expression type. You must
 know the return type and the argument list if you want to use the
-delegate object in a strongly typed manner. The `LambdaExpression.Compile()`
-method returns the `Delegate` type. You will have to cast it to the correct
-delegate type to have any compile-time tools check the argument list of
-return type.
+delegate object in a strongly typed manner. The <xref:System.Linq.Expressions.LambdaExpression.Compile%2A?displayProperty=nameWithType>
+method returns the <xref:System.Delegate> type. You have to cast it to the correct
+delegate type to have any compile-time tools check the argument list of the return type.
 
 ## Execution and Lifetimes
 
 You execute the code by invoking the delegate created when
-you called `LamdbaExpression.Compile()`. You can see this above where
-`add.Compile()` returns a delegate. Invoking that delegate, by calling
+you call <xref:System.Linq.Expressions.LambdaExpression.Compile%2A?displayProperty=nameWithType>. You can see this above where
+`add.Compile()` returns a delegate. Invoking that delegate by calling
 `func()` executes the code.
 
 That delegate represents the code in the expression tree. You can
@@ -88,7 +86,7 @@ compile calls. Comparing two arbitrary expression trees to determine
 if they represent the same algorithm will also be time consuming to
 execute. You'll likely
 find that the compute time you save avoiding any extra calls to
-`LambdaExpression.Compile()` will be more than consumed by the time executing
+<xref:System.Linq.Expressions.LambdaExpression.Compile%2A?displayProperty=nameWithType> will be more than consumed by the time executing
 code that determines of two different expression trees result in
 the same executable code.
 
@@ -99,18 +97,18 @@ is one of the simplest operations you can perform with an expression
 tree. However, even with this simple operation, there are caveats
 you must be aware of. 
 
-Lambda Expressions create closures over any local variables that are
+Lambda expressions create closures over any local variables that are
 referenced in the expression. You must guarantee that any variables
 that would be part of the delegate are usable at the location where
-you call `Compile`, and when you execute the resulting delegate.
+you call <xref:System.Linq.Expressions.LambdaExpression.Compile%2A?displayProperty=nameWithType> and when you execute the resulting delegate.
 
 In general, the compiler will ensure that this is true. However,
-if your expression accesses a variable that implements `IDisposable`,
+if your expression accesses a variable that implements <xref:System.IDisposable>,
 it's possible that your code might dispose of the object while it
 is still held by the expression tree.
 
 For example, this code works fine, because `int` does not implement
-`IDisposable`:
+<xref:System.IDisposable>:
 
 ```csharp
 private static Func<int, int> CreateBoundFunc()
@@ -127,7 +125,7 @@ That variable is accessed at any time later, when the function returned
 by `CreateBoundFunc` executes.
 
 However, consider this (rather contrived) class that implements
-`IDisposable`:
+<xref:System.IDisposable>:
 
 ```csharp
 public class Resource : IDisposable
@@ -151,7 +149,7 @@ public class Resource : IDisposable
 ```
 
 If you use it in an expression as shown below, you'll get an
-`ObjectDisposedException` when you execute the code referenced
+<xref:System.ObjectDisposedException> when you execute the code referenced
 by the `Resource.Argument` property:
 
 ```csharp
@@ -167,11 +165,11 @@ private static Func<int, int> CreateBoundResource()
 ```
 
 The delegate returned from this method has closed over the `constant` object,
-which has been disposed of. (It's been disposed, because it was declared in a
+which has been disposed of. (It's been disposed because it was declared in a
 `using` statement.) 
 
-Now, when you execute the delegate returned from this method, you'll have a
-`ObjecctDisposedException` thrown at the point of execution.
+Now, when you execute the delegate returned from this method, you'll have an
+<xref:System.ObjectDisposedException> thrown at the point of execution.
 
 It does seem strange to have a runtime error representing a compile-time
 construct, but that's the world we enter when we work with
