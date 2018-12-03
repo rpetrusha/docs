@@ -89,6 +89,12 @@ We expect hosting providers to define custom configuration and policy, including
 
 See [Host startup hook](https://github.com/dotnet/core-setup/blob/master/Documentation/design-docs/host-startup-hook.md) for more information.
 
+## New deployment mode
+
+Starting with .NET Core 2.2, you can deploy [framework-dependent executables](../deploying/index.md), which are **.exe** files instead of **.dll** files. Functionally similar to framework-dependent deployments, framework-dependent executables (FDE) are platform-specific and aren't self-contained. These deployments still rely on the presence of a shared system-wide version of .NET Core to run. Your app contains only your code and any third-party dependencies.
+
+This new deployment mode has the distinct advantage of building an executable instead of a library, which means you can run your app directly without invoking `dotnet` first.
+
 ## See also
 
 * [What's new in .NET Core](index.md)  
