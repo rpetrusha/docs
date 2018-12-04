@@ -17,6 +17,12 @@ ms.date: 12/04/2018
 - [JIT compilation improvements](#jit-compiler-improvements)
 - [Runtime](#runtime)
 
+## New deployment mode
+
+Starting with .NET Core 2.2, you can deploy [framework-dependent executables](../deploying/index.md#framework-dependent-executables-fde), which are **.exe** files instead of **.dll** files. Functionally similar to framework-dependent deployments, framework-dependent executables (FDE) still rely on the presence of a shared sysem-wide version of .NET Core to run. Your app contains only your code and any third-party dependencies. Unlike framework-dependent deployments, FDEs are platform-specific.  
+
+This new deployment mode has the distinct advantage of building an executable instead of a library, which means you can run your app directly without invoking `dotnet` first.
+
 ## Core
 
 **Handling events in runtime services**
@@ -88,12 +94,6 @@ Starting with .NET Core 2.2, you can use a startup hook to inject code prior to 
 We expect hosting providers to define custom configuration and policy, including settings that potentially influence the load behavior of the main entry point, such as the <xref:System.Runtime.Loader.AssemblyLoadContext?displayProperty=nameWithType> behavior. The hook can be used to set up tracing or telemetry injection, to set up callbacks for handling, or to define other environment-dependent behavior. The hook is separate from the entry point, so that user code doesn't need to be modified.
 
 See [Host startup hook](https://github.com/dotnet/core-setup/blob/master/Documentation/design-docs/host-startup-hook.md) for more information.
-
-## New deployment mode
-
-Starting with .NET Core 2.2, you can deploy [framework-dependent executables](../deploying/index.md), which are **.exe** files instead of **.dll** files. Functionally similar to framework-dependent deployments, framework-dependent executables (FDE) are platform-specific and aren't self-contained. These deployments still rely on the presence of a shared system-wide version of .NET Core to run. Your app contains only your code and any third-party dependencies.
-
-This new deployment mode has the distinct advantage of building an executable instead of a library, which means you can run your app directly without invoking `dotnet` first.
 
 ## See also
 
